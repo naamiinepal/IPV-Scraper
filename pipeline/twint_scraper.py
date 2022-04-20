@@ -102,7 +102,7 @@ def scrape_tweets(search_term: str = "कुकुर्नी",
                     fields: List[str] = 'all',
                     store_csv: bool = False, 
                     location: str = r'results',
-                    filename: str = 'scraped_tweets.txt',
+                    filename: str = 'scraped_tweets.csv',
                     verbose: bool = False):
 
     # Set up TWINT config
@@ -134,6 +134,7 @@ def scrape_tweets(search_term: str = "कुकुर्नी",
         
         if store_csv:
             os.makedirs(location, exist_ok = True)
+            filename = filename[:-4] + "_" + search_term.replace("#", "") + ".csv"
             tweet_df.to_csv(os.path.join(location, filename), index = None, encoding = 'utf-8')
 
         return tweet_df
