@@ -64,10 +64,10 @@ def main(batch_size: int = 1):
 if __name__ == "__main__":
     keywords = read_csv('keywords.txt', header = None, encoding = 'utf-8', skip_blank_lines = True)
 
-    for SEED in keywords[0][1:4]:
+    for SEED in keywords[0]:
         #SEED = "घर भाँड्ने"
-        temp = SEED
         df = collect_tweets_from_seed(SEED)
-        df.to_csv(join('results', f'scraped_{SEED}.csv'), index = None, encoding = "utf-8")
+        if len(df) > 0:
+            df.to_csv(join('results', f'scraped_{SEED}.csv'), index = None, encoding = "utf-8")
 
         sleep(5.0)
