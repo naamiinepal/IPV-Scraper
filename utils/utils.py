@@ -1,3 +1,4 @@
+import json
 import yaml
 from os.path import exists
 
@@ -30,3 +31,22 @@ def load_config(config_path: str) -> DotDict:
         raise FileNotFoundError()
         
     return DotDict(config)  
+
+def create_batch(iterable, n=1):
+    """
+    Create batches of size 'n' out of a list of items.
+
+    Args:
+        iterable (_type_): 1D - List.
+        n (int, optional): batch_size. Defaults to 1.
+
+    Yields:
+        _type_: _description_
+    """    
+    l = len(iterable)
+    for ndx in range(0, l, n):
+        yield iterable[ndx:min(ndx + n, l)]
+
+def dict_to_json(dictionary: dict, save_path: str):
+    with open(save_path, encoding="utf8", mode = "w") as f:
+        json.dump(dictionary, f)
