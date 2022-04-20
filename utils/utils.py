@@ -1,7 +1,7 @@
 import yaml
 from os.path import exists
 
-from read_configuration import DotDict
+from utils.read_configuration import DotDict
 
 def load_config(config_path: str) -> DotDict:
     '''
