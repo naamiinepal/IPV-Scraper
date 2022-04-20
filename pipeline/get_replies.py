@@ -32,12 +32,12 @@ class TweetReplies:
         self.verbose = verbose
 
     def get_replies_from_tweet_id(self, 
-                                tweet_id: str = "1516429498731966467", 
+                                tweet_id: str, 
                                 max_results: int = 100, 
                                 return_dict: bool = False) -> dict:
         
-        #tweet_id = "1516429498731966467"
-        query = "conversation_id:" + tweet_id
+        #query = "conversation_id:" + tweet_id
+        query = self._create_search_query(tweet_id)
 
         # Get response from the API request.
         response = self.client.search_recent_tweets(query = query , max_results = max_results)
@@ -73,7 +73,7 @@ class TweetReplies:
         return len(self.get_replies_from_tweet_id(tweet_id, max_results, return_dict = False))
 
     def get_replies_from_tweet_id_to_dataframe(self, 
-                                                tweet_id: str = "1516429498731966467", 
+                                                tweet_id: str, 
                                                 max_results: int = 100, 
                                             ) -> DataFrame:
         
@@ -95,10 +95,12 @@ class TweetReplies:
         Returns:
             dict: Dictionary where keys are the input tweet IDs and the values are the 
                   dictionary of tweet replies. 
-        """        
-        assert len(tweet_ids) > 0 and tweet_ids is not None, "Tweet ids list is empty."
-        assert type(tweet_ids) == list, "The ids should be a list of strings."
+        """       
 
+        n_tweet_ids = len(tweet_ids)
+        assert n_tweet_ids > 0 and tweet_ids is not None, "Tweet ids list is empty."
+        assert type(tweet_ids) == list, "The ids should be a list of strings."
+        
         collection = dict()   # Dictionary to store a dictionary of tweet replies.
 
         for id in tweet_ids:
@@ -112,10 +114,28 @@ class TweetReplies:
             time.sleep(5)
 
             # Store in a collection if the replies list exists.
-            if n_replies > 0:
-                collection[str(id)] = replies
+            #if n_replies > 0:
+            collection[str(id)] = replies
             
             return collection
+
+    def _create_search_query(self, query) -> str:
+        """
+        Creates a search query for the Twitter API to follow.
+
+        Args:
+            query (str or list): Should be a list tweet IDs or a string of just one ID.
+
+        Returns:
+            str: Search query.
+                 If it is just one ID, it will give 'conversation_id:<tweet_id>'.
+                 Otherwise, It will do the same but will be concatenated using ' OR ' delimiter.
+        """        
+        if (type(query) == list) and (len(query) > 0):
+            query = " OR ".join(["conversation_id:" + id for id in query])
+        elif type(query) == str:
+            query = "conversation_id:" + query
+        return query
 
     def _clean_tweet(self, text: str) -> str:
         # Remove hyperlinks, hashtags and mentions.
