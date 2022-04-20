@@ -1,5 +1,7 @@
 from ctypes import util
-from time import time
+from time import sleep, time
+
+from pandas import read_csv
 from pipeline.get_replies import TweetReplies
 from os.path import join
 
@@ -10,8 +12,9 @@ from utils import utils
 def collect_tweets_from_seed(seed: str):
     start = time()
     fields = 'id conversation_id date tweet language hashtags user_id_str username link retweet nreplies search reply_to'.split()
-    df = scrape_tweets(search_term = seed, fields = fields, store_csv = True)
-
+    df = scrape_tweets(search_term = seed, fields = 'all', store_csv = False)
+    df = df[['date', 'tweet' , 'link']]
+    df['tweet'] = df['tweet'].apply(lambda x: utils.clean_tweet(x))
     end = time()
     print(f'Collected {len(df)} Tweets in {end - start: .5f} seconds.')
 
@@ -22,7 +25,7 @@ def main(batch_size: int = 1):
     assert batch_size > 0, "Batch size should be a Natural Number."
 
     # Scrape Tweets using a seed.
-    SEED = 'कुकुर'
+    SEED = "कुकुर्नी OR बाेक्सी OR नकच्चरी OR गतिछाडा"
     
     df = collect_tweets_from_seed(SEED)
     assert len(df) > 0 and df is not None, "No items in the DataFrame."
@@ -48,7 +51,7 @@ def main(batch_size: int = 1):
 
     df2 = loader.get_replies_from_tweet_id_to_dataframe(tweet_id = tweet_ids[5])
     df2.to_csv(join('results', 'replies_sample.csv'), encoding = 'utf-8', index = None)
-    
+
     # Supply Tweet ID.
     #agg_dict = loader.get_replies_from_tweet_id_list(tweet_ids, max_results = 100)
     
@@ -59,4 +62,12 @@ def main(batch_size: int = 1):
     #df.to_csv(join("results", f"newde.txt"), index = None, encoding = 'utf-8')
 
 if __name__ == "__main__":
-    main()
+    keywords = read_csv('keywords.txt', header = None, encoding = 'utf-8', skip_blank_lines = True)
+
+    for SEED in keywords[0][1:4]:
+        #SEED = "घर भाँड्ने"
+        temp = SEED
+        df = collect_tweets_from_seed(SEED)
+        df.to_csv(join('results', f'scraped_{SEED}.csv'), index = None, encoding = "utf-8")
+
+        sleep(5.0)
