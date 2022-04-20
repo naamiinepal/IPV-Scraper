@@ -61,4 +61,7 @@ def clean_tweet(text: str) -> str:
     # Remove emojis.
     text = emoji.replace_emoji(text, "")
 
+    # Strip white spaces.
+    text = text.strip()
+
     return text
