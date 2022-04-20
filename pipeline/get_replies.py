@@ -7,7 +7,7 @@ import emoji
 #ssl._create_default_https_context = ssl._create_unverified_context
 
 # Local Modules.
-import utils
+from utils import utils
 
 class TweetReplies:
     def __init__(self, config, clean_text: bool = True, verbose: bool = False) -> None:
@@ -128,21 +128,4 @@ class TweetReplies:
         return text
 
 
-def main():
-    # Load the configuration that contains the bearer tokens along with API and access tokens.
-    config = utils.load_config('config.yaml')
-
-    # Instantiate Replies Loader.
-    loader = TweetReplies(config, clean_text=True)
-
-    # Supply Tweet ID.
-    tweet_id = "1516429498731966467"
-    
-    # Obtain dataframe.
-    df = loader.get_replies_from_tweet_id_to_dataframe(tweet_id, 100)
-
-    df.to_csv(f"replies_{tweet_id}_cleaned.txt", index = None, encoding = 'utf-8')
-
-if __name__ == "__main__":
-    main()
 
