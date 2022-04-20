@@ -1,4 +1,6 @@
 import json
+import re
+import emoji
 import yaml
 from os.path import exists
 
@@ -50,3 +52,13 @@ def create_batch(iterable, n=1):
 def dict_to_json(dictionary: dict, save_path: str):
     with open(save_path, encoding="utf8", mode = "w") as f:
         json.dump(dictionary, f)
+
+def clean_tweet(text: str) -> str:
+    # Remove hyperlinks, hashtags and mentions.
+    pattern = r'(@[A-Za-z0-9]+)|(#[A-Za-z0-9]+)|https?:\/\/\S*'
+    text = re.sub(pattern, "", text)
+    
+    # Remove emojis.
+    text = emoji.replace_emoji(text, "")
+
+    return text
