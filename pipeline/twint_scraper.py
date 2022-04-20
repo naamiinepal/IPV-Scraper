@@ -98,7 +98,7 @@ import twint
 import nest_asyncio
 nest_asyncio.apply()
 
-def scrape_tweets(search_term: str = "कुकुर्नी",
+def scrape_tweets(search_term: str,
                     fields: List[str] = 'all',
                     store_csv: bool = False, 
                     location: str = r'results',
@@ -112,6 +112,7 @@ def scrape_tweets(search_term: str = "कुकुर्नी",
     c.Search = search_term
     c.Retweets = True
     c.Lang = None           # "ne" for Nepali, "hi" for Hindi, "en" for English
+    c.Since = "2015-01-01"
 
     # Custom output format
     c.Limit = 200
@@ -120,24 +121,20 @@ def scrape_tweets(search_term: str = "कुकुर्नी",
     c.Store_json = False
     c.Hide_output = not verbose
 
-    try:
-        # Run search.
-        twint.run.Search(c)
-        twint_to_pd = lambda column_names: twint.output.panda.Tweets_df[column_names]
-        
-        # To Pandas DataFrame.
-        columns = twint.output.panda.Tweets_df.columns if fields == "all" else fields
-        #columns = 'id date tweet language place hashtags user_id name link urls'.split()
+    # Run search.
+    twint.run.Search(c)
+    twint_to_pd = lambda column_names: twint.output.panda.Tweets_df[column_names]
+    
+    # To Pandas DataFrame.
+    columns = twint.output.panda.Tweets_df.columns if fields == "all" else fields
+    #columns = 'id date tweet language place hashtags user_id name link urls'.split()
 
-        # Save the tweets in a DataFrame.
-        tweet_df = twint_to_pd(columns)
-        
-        if store_csv:
-            os.makedirs(location, exist_ok = True)
-            filename = filename[:-4] + "_" + search_term.replace("#", "") + ".csv"
-            tweet_df.to_csv(os.path.join(location, filename), index = None, encoding = 'utf-8')
+    # Save the tweets in a DataFrame.
+    tweet_df = twint_to_pd(columns)
+    
+    if store_csv:
+        os.makedirs(location, exist_ok = True)
+        filename = filename[:-4] + "_" + search_term.replace("#", "") + ".csv"
+        tweet_df.to_csv(os.path.join(location, filename), index = None, encoding = 'utf-8')
 
-        return tweet_df
-
-    except:
-        return "Error!"
+    return tweet_df
