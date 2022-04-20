@@ -90,34 +90,53 @@ Twint Dataclass attributes:
     deleted: list = None
 """
 
+from genericpath import exists
+import os
+from typing import List
 import twint
 
 import nest_asyncio
 nest_asyncio.apply()
 
-# Set up TWINT config
-c = twint.Config()
+def scrape_tweets(search_term: str = "कुकुर्नी",
+                    fields: List[str] = 'all',
+                    store_csv: bool = False, 
+                    location: str = r'results',
+                    filename: str = 'scraped_tweets.txt',
+                    verbose: bool = False):
 
-#c.Search = "Redmi"
-c.Username = "HisilaPost"
-#c.Lang = "ne"
+    # Set up TWINT config
+    c = twint.Config()
+    c.Username = None
+    c.User_id = None
+    c.Search = search_term
+    c.Retweets = True
+    c.Lang = None           # "ne" for Nepali, "hi" for Hindi, "en" for English
 
-# Custom output format
-c.Limit = 200
-c.Pandas = True
-c.Store_csv = False
-c.Hide_output = True
+    # Custom output format
+    c.Limit = 200
+    c.Pandas = True
+    c.Store_csv = False
+    c.Store_json = False
+    c.Hide_output = not verbose
 
-try:
-    # Run search.
-    twint.run.Search(c)
-    twint_to_pd = lambda column_names: twint.output.panda.Tweets_df[column_names]
-    
-    # To Pandas DataFrame.
-    columns = twint.output.panda.Tweets_df.columns
-    #columns = 'id date tweet language place hashtags user_id name link urls'.split()
-    tweet_df = twint_to_pd(columns)
-    #tweet_df
+    try:
+        # Run search.
+        twint.run.Search(c)
+        twint_to_pd = lambda column_names: twint.output.panda.Tweets_df[column_names]
+        
+        # To Pandas DataFrame.
+        columns = twint.output.panda.Tweets_df.columns if fields == "all" else fields
+        #columns = 'id date tweet language place hashtags user_id name link urls'.split()
 
-except:
-    pass
+        # Save the tweets in a DataFrame.
+        tweet_df = twint_to_pd(columns)
+        
+        if store_csv:
+            os.makedirs(location, exist_ok = True)
+            tweet_df.to_csv(os.path.join(location, filename), index = None, encoding = 'utf-8')
+
+        return tweet_df
+
+    except:
+        return "Error!"
