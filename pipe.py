@@ -1,9 +1,8 @@
-from ctypes import util
 from time import sleep, time
 
 from pandas import read_csv
 from pipeline.get_replies import TweetReplies
-from os.path import join
+from os.path import join, exists
 
 # Local modules.
 from pipeline.twint_scraper import scrape_tweets
@@ -15,8 +14,9 @@ def collect_tweets_from_seed(seed: str):
     df = scrape_tweets(search_term = seed, fields = 'all', store_csv = False)
     df = df[['date', 'tweet' , 'link']]
     df['tweet'] = df['tweet'].apply(lambda x: utils.clean_tweet(x))
+    df['keyword'] = [seed] * len(df)
     end = time()
-    print(f'Collected {len(df)} Tweets in {end - start: .5f} seconds.')
+    print(f'\nCollected {len(df)} Tweets in {end - start: .5f} seconds for SEED = {seed}.\n' + '-'*40)
 
     return df
 
@@ -66,8 +66,13 @@ if __name__ == "__main__":
 
     for SEED in keywords[0]:
         #SEED = "घर भाँड्ने"
-        df = collect_tweets_from_seed(SEED)
-        if len(df) > 0:
-            df.to_csv(join('results', f'scraped_{SEED}.csv'), index = None, encoding = "utf-8")
+        if not exists(join('results', f'scraped_{SEED}.csv')):
+            try:
+                df = collect_tweets_from_seed(SEED)
+                if len(df) > 0:
+                    df.to_csv(join('results', f'scraped_{SEED}.csv'), index = None, encoding = "utf-8")
+            except:
+                print(f"\nSkipping for seed = {SEED}.\n")
+                continue
 
-        sleep(5.0)
+            sleep(5.0)
