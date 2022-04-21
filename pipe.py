@@ -10,11 +10,17 @@ from utils import utils
 
 def collect_tweets_from_seed(seed: str):
     start = time()
+    
     fields = 'id conversation_id date tweet language hashtags user_id_str username link retweet nreplies search reply_to'.split()
     df = scrape_tweets(search_term = seed, fields = 'all', store_csv = False)
-    df = df[['date', 'tweet' , 'link']]
+
+    # Select 3 fields having only "ne" as language.
+    df = df[df['language'] == 'ne'][['date', 'tweet' , 'link']]
+
+    # Clean tweets.
     df['tweet'] = df['tweet'].apply(lambda x: utils.clean_tweet(x))
     df['keyword'] = [seed] * len(df)
+
     end = time()
     print(f'\nCollected {len(df)} Tweets in {end - start: .5f} seconds for SEED = {seed}.\n' + '-'*40)
 
