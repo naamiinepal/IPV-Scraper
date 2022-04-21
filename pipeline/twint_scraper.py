@@ -111,7 +111,7 @@ def scrape_tweets(search_term: str,
     c.User_id = None
     c.Search = search_term
     c.Retweets = True
-    c.Lang = None           # "ne" for Nepali, "hi" for Hindi, "en" for English
+    c.Lang = 'ne'           # "ne" for Nepali, "hi" for Hindi, "en" for English
     c.Since = "2015-01-01"
 
     # Custom output format
