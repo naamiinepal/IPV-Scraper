@@ -10,7 +10,7 @@ from utils import utils
 
 def collect_tweets_from_seed(seed: str):
     start = time()
-    
+
     fields = 'id conversation_id date tweet language hashtags user_id_str username link retweet nreplies search reply_to'.split()
     df = scrape_tweets(search_term = seed, fields = 'all', store_csv = False)
 
@@ -70,7 +70,7 @@ def main(batch_size: int = 1):
 if __name__ == "__main__":
     keywords = read_csv('keywords.txt', header = None, encoding = 'utf-8', skip_blank_lines = True)
 
-    for SEED in keywords[0]:
+    for SEED in ['जिउदै OR जिउँदै', 'मार्दिन्छु OR मारिदिन्छु', 'जलाउनु OR जलाईदिन्छु OR जलाउ']:
         #SEED = "घर भाँड्ने"
         if not exists(join('results', f'scraped_{SEED}.csv')):
             try:
