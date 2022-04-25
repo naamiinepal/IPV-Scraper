@@ -70,9 +70,9 @@ def main(batch_size: int = 1):
 if __name__ == "__main__":
     keywords = read_csv('keywords.txt', header = None, encoding = 'utf-8', skip_blank_lines = True)
 
-    for SEED in ['जिउदै OR जिउँदै', 'मार्दिन्छु OR मारिदिन्छु', 'जलाउनु OR जलाईदिन्छु OR जलाउ']:
+    for SEED in keywords.iloc[-15:, :][0].to_list():
         #SEED = "घर भाँड्ने"
-        if not exists(join('results', f'scraped_{SEED}.csv')):
+        if not exists(join('results', 'new_twitter', f'scraped_{SEED}.csv')):
             try:
                 df = collect_tweets_from_seed(SEED)
                 if len(df) > 0:
