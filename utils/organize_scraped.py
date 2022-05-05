@@ -1,4 +1,5 @@
 #%% Import libraries.
+import emoji
 import pandas as pd
 import re
 from os.path import join, exists
@@ -19,17 +20,18 @@ def cleaner(text: str) -> str:
     Returns:
         str: Cleaned text.
     """    
-    pattern1 = r'(_[a-zA-Z0-9]+)|(#[\u0900-\u097F]+)|(@[\u0900-\u097F]+)|(_[\u0900-\u097F]+)'
+    pattern1 = r'(_[a-zA-Z0-9]+)|(#[\u0900-\u097F]+)|(@[\u0900-\u097F]+)|(_[\u0900-\u097F]+)|(@[A-Za-z0-9]+)|(#[A-Za-z0-9]+)|https?:\/\/\S*'
     to_replace = """@#=/+…:"")(}{][*%_’‘'"""
     pattern2 = r'(\W)(?=\1)'
     text = re.sub(pattern1, '', text)
     text = text.translate(str.maketrans('', '', to_replace))
     text = text.translate(str.maketrans('', '', '&gt;'))
+    text = emoji.replace_emoji(text, "")
     text = re.sub(pattern2, '', text)
     return text
 
 
-root = r'D:\ML_projects\IPV-Scraper\results\new_twitter'
+root = r'D:\ML_projects\IPV-Scraper\results\second_lot'
 filenames = os.listdir(root)
 filepaths = [join(root, filename) for filename in filenames]
 
@@ -44,7 +46,23 @@ df_main = pd.concat(dataframe_list, axis = 0, ignore_index = True)
 # Clean Tweets.
 df_main['tweet'] = df_main['tweet'].apply(cleaner)
 
-#%% To CSV.
-df_main.to_csv(join(root, 'df_merged_search_terms_cleaned_25-Apr-2021_nep.csv'), index = None, encoding = 'utf-8')
+# Select only the columns "date tweet link search".
+df_main = df_main["date tweet link search".split()]
+df_main.columns = "date text link keyword".split()
 
-df_main.keyword.value_counts().to_csv(join(root, 'tweet_counts_nep.csv'), encoding = 'utf-8', header = None)
+# Select only those rows having sentence lengths greater than or equal to 3.
+condition = df_main['text'].apply(lambda x: len(x.split()) >= 3)
+df_main = df_main[condition]
+
+# Remove duplicated texts.
+df_main.drop_duplicates(subset = 'text', keep = 'first', ignore_index = True, inplace = True)
+
+# Reset index.
+df_main.reset_index(drop = True, inplace = True)
+
+#%% To CSV.
+output_filename = 'df_merged_second_lot_search_terms_cleaned_05-May-2021_nep.xlsx'
+#df_main.to_csv(join(root, output_filename), index = None, encoding = 'utf-8')
+df_main.to_excel(join(root, output_filename), index = None, encoding = 'utf-8')
+
+df_main.keyword.value_counts().to_csv(join(root, 'tweet_counts_nep_second_lot.csv'), encoding = 'utf-8', header = None)
