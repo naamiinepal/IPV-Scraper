@@ -1,7 +1,10 @@
-from ctypes import util
-from time import time
+
+import os
+from time import sleep, time
+
+from pandas import read_csv
 from pipeline.get_replies import TweetReplies
-from os.path import join
+from os.path import join, exists
 
 # Local modules.
 from pipeline.twint_scraper import scrape_tweets
@@ -18,45 +21,24 @@ def collect_tweets_from_seed(seed: str):
     return df
 
 
-def main(batch_size: int = 1):
-    assert batch_size > 0, "Batch size should be a Natural Number."
+def main(target_dir = r'results/second_lot'):
 
-    # Scrape Tweets using a seed.
-    SEED = 'कुकुर'
-    
-    df = collect_tweets_from_seed(SEED)
-    assert len(df) > 0 and df is not None, "No items in the DataFrame."
+    keywords = read_csv('keywords.txt', header = None, encoding = 'utf-8', skip_blank_lines = True)
+    os.makedirs(target_dir, exist_ok=True)
 
-    # Extract tweets with at least one reply.
-    df_with_replies = df[df['nreplies'] > 0]
+    for SEED in keywords.iloc[39:, :][0].to_list():   # Lot 2.
+        if not exists(join(target_dir, f'scraped_{SEED}.csv')):
+            try:
+                df = collect_tweets_from_seed(SEED)
+                if len(df) > 0:
+                    df.to_csv(join(target_dir, f'scraped_{SEED}.csv'), index = None, encoding = "utf-8")
+            except:
+                print(f"\nSkipping for seed = {SEED}.\n")
+                continue
 
-    # Extract Tweet IDs from the links so that their replies can be scraped.
-    tweet_ids = df_with_replies['link'].apply(lambda string: string.split("/")[-1])
-    tweet_ids = tweet_ids.to_list()
-
-    if batch_size > 1:
-        tweet_id_batches = utils.create_batch(tweet_ids)
-
-        # WRITE CODE FOR EXTRACTING REPLIES USING BATCHES.
-
-
-    # Load the configuration that contains the bearer tokens along with API and access tokens.
-    config = utils.load_config('config.yaml')
-
-    # Instantiate Replies Loader.
-    loader = TweetReplies(config, clean_text=False)
-
-    df2 = loader.get_replies_from_tweet_id_to_dataframe(tweet_id = tweet_ids[5])
-    df2.to_csv(join('results', 'replies_sample.csv'), encoding = 'utf-8', index = None)
-    
-    # Supply Tweet ID.
-    #agg_dict = loader.get_replies_from_tweet_id_list(tweet_ids, max_results = 100)
-    
-    # To JSON.
-    #assert len(agg_dict) > 0 and agg_dict is not None, "Aggregated dictionary is empty."
-    #utils.dict_to_json(agg_dict, join('results', 'agg_dict.json'))
-    #print(df)
-    #df.to_csv(join("results", f"newde.txt"), index = None, encoding = 'utf-8')
+            sleep(5.0)
 
 if __name__ == "__main__":
     main()
+
+
