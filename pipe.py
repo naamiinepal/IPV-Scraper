@@ -12,6 +12,8 @@ from utils import utils
 def collect_tweets_from_seed(seed: str):
     start = time()
     fields = 'id conversation_id date tweet language hashtags user_id_str username link retweet nreplies search reply_to'.split()
+    print(f"\nSearch Term : {seed}\n{'_'*50}")
+    
     df = scrape_tweets(search_term = seed, fields = fields, store_csv = True)
 
     end = time()
@@ -25,7 +27,7 @@ def main(target_dir = r'results/second_lot'):
     keywords = read_csv('keywords.txt', header = None, encoding = 'utf-8', skip_blank_lines = True)
     os.makedirs(target_dir, exist_ok=True)
 
-    for SEED in keywords.iloc[39:, :][0].to_list():   # Lot 2.
+    for SEED in keywords.iloc[-8:, :][0].to_list():   # Lot 2.
         if not exists(join(target_dir, f'scraped_{SEED}.csv')):
             try:
                 df = collect_tweets_from_seed(SEED)
