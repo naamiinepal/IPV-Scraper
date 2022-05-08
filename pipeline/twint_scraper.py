@@ -90,7 +90,6 @@ Twint Dataclass attributes:
     deleted: list = None
 """
 
-from genericpath import exists
 import os
 from typing import List
 import twint
