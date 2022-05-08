@@ -13,7 +13,7 @@ def collect_tweets_from_seed(seed: str):
     start = time()
     fields = 'id conversation_id date tweet language hashtags user_id_str username link retweet nreplies search reply_to'.split()
     print(f"\nSearch Term : {seed}\n{'_'*50}")
-    
+
     df = scrape_tweets(search_term = seed, fields = fields, store_csv = True)
 
     end = time()
@@ -28,11 +28,13 @@ def main(target_dir = r'results/second_lot'):
     os.makedirs(target_dir, exist_ok=True)
 
     for SEED in keywords.iloc[-8:, :][0].to_list():   # Lot 2.
-        if not exists(join(target_dir, f'scraped_{SEED}.csv')):
+
+        save_filename = f'scraped_{SEED}.csv'
+        if not exists(join(target_dir, save_filename)):
             try:
                 df = collect_tweets_from_seed(SEED)
                 if len(df) > 0:
-                    df.to_csv(join(target_dir, f'scraped_{SEED}.csv'), index = None, encoding = "utf-8")
+                    df.to_csv(join(target_dir, save_filename), index = None, encoding = "utf-8")
             except:
                 print(f"\nSkipping for seed = {SEED}.\n")
                 continue
