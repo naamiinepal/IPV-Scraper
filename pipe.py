@@ -43,5 +43,3 @@ def main(target_dir = r'results/second_lot'):
 
 if __name__ == "__main__":
     main()
-
-
