@@ -42,4 +42,5 @@ def main(target_dir = r'results/second_lot'):
             sleep(5.0)
 
 if __name__ == "__main__":
-    main()
+    df = scrape_tweets(search_term = None, store_csv = True, save_dir = r'results/temp', verbose = True)
+    print(f"Completed. Obtained {len(df)} tweets.")
