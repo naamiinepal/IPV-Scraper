@@ -91,16 +91,17 @@ Twint Dataclass attributes:
 """
 
 import os
-from typing import List
+from time import time
+from typing import List, Optional
 import twint
 
 import nest_asyncio
 nest_asyncio.apply()
 
-def scrape_tweets(search_term: str,
+def scrape_tweets(search_term: Optional[str],
                     fields: List[str] = 'all',
                     store_csv: bool = False, 
-                    location: str = r'results',
+                    save_dir: str = r'results',
                     filename: str = 'scraped_tweets.csv',
                     verbose: bool = False):
 
@@ -110,17 +111,21 @@ def scrape_tweets(search_term: str,
     c.User_id = None
     c.Search = search_term
     c.Retweets = True
+    c.Replies = True
+    c.Location = True
+    c.Geo = "27.700769,85.300140,10km"
     c.Lang = 'ne'           # "ne" for Nepali, "hi" for Hindi, "en" for English
-    c.Since = "2015-01-01"
+    c.Since = "2019-01-01"
 
     # Custom output format
-    c.Limit = 2000
+    c.Limit = 100
     c.Pandas = True
     c.Store_csv = False
     c.Store_json = False
     c.Hide_output = not verbose
 
     # Run search.
+    start = time()
     twint.run.Search(c)
     twint_to_pd = lambda column_names: twint.output.panda.Tweets_df[column_names]
     
@@ -130,10 +135,18 @@ def scrape_tweets(search_term: str,
 
     # Save the tweets in a DataFrame.
     tweet_df = twint_to_pd(columns)
+    end = time()
+    if verbose:
+        print(f'Collected {len(tweet_df)} tweets in {end - start: 5.3f} seconds.\n')
     
     if store_csv:
-        os.makedirs(location, exist_ok = True)
-        filename = filename[:-4] + "_" + search_term.replace("#", "") + ".csv"
-        tweet_df.to_csv(os.path.join(location, filename), index = None, encoding = 'utf-8')
+        os.makedirs(save_dir, exist_ok = True)
+        if search_term is not None:
+            filename = filename[:-4] + "_" + search_term.replace("#", "") + ".csv"
+        else:
+            filename = 'scraped_tweets.csv'
+
+        # Save to CSV file in the desired location.
+        tweet_df.to_csv(os.path.join(save_dir, filename), index = None, encoding = 'utf-8')
 
     return tweet_df
