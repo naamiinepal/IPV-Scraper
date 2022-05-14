@@ -1,3 +1,4 @@
+
 import os
 from time import sleep, time
 
@@ -45,10 +46,13 @@ def main(target_dir = r'results/second_lot', organize_tweets: bool = True):
             sleep(5.0)
     
     # Organize scraped Tweets in a file.
-    organizer(root = target_dir, output_filename = 'scraped_all_keywords_04-05-022.xlsx')
+    if organize_tweets:
+        organizer(root = target_dir, output_filename = 'scraped_all_keywords_04-05-022.xlsx')
     
 
 if __name__ == "__main__":
     #df = scrape_tweets(search_term = None, store_csv = True, save_dir = r'results/temp', verbose = True)
-    
+    '''
+    Driver Code.
+    '''
     main(target_dir = r'results/all_keywords')
