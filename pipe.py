@@ -16,7 +16,7 @@ def collect_tweets_from_seed(seed: str):
     fields = 'id conversation_id date tweet language hashtags user_id_str username link retweet nreplies search reply_to'.split()
     print(f"\nSearch Term : {seed}\n{'_'*50}")
 
-    df = scrape_tweets(search_term = seed, fields = fields, store_csv = True)
+    df = scrape_tweets(search_term = seed, fields = fields, store_csv = False)
 
     end = time()
     print(f'Collected {len(df)} Tweets in {end - start: .5f} seconds.\n{"-" * 50}')
@@ -24,10 +24,11 @@ def collect_tweets_from_seed(seed: str):
     return df
 
 
-def main(target_dir = r'results/second_lot', organize_tweets: bool = True):
+def main(target_dir:str = r'results/second_lot', output_filename: str = 'scraped_keywords_.xlsx', organize_tweets: bool = True):
 
     keywords = read_csv('keywords.txt', header = None, encoding = 'utf-8', skip_blank_lines = True)
-    keywords = Series(keywords).drop_duplicates(keep = 'first')
+    keywords = keywords.drop_duplicates(keep = 'first').values.ravel()
+    print(f'\nFound {len(keywords)} keywords.\nStarting search...\n')
 
     os.makedirs(target_dir, exist_ok=True)
 
@@ -55,4 +56,4 @@ if __name__ == "__main__":
     '''
     Driver Code.
     '''
-    main(target_dir = r'results/all_keywords')
+    main(target_dir = r'results/all_keywords', output_filename = 'scraped_all_keywords_04-05-022.xlsx')
