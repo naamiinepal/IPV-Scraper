@@ -1,7 +1,7 @@
 import os
 from time import sleep, time
 
-from pandas import read_csv
+from pandas import Series, read_csv
 from pipeline.get_replies import TweetReplies
 from os.path import join, exists
 
@@ -17,7 +17,7 @@ def collect_tweets_from_seed(seed: str):
     df = scrape_tweets(search_term = seed, fields = fields, store_csv = True)
 
     end = time()
-    print(f'Collected {len(df)} Tweets in {end - start: .5f} seconds.')
+    print(f'Collected {len(df)} Tweets in {end - start: .5f} seconds.\n{"-" * 50}')
 
     return df
 
@@ -25,9 +25,11 @@ def collect_tweets_from_seed(seed: str):
 def main(target_dir = r'results/second_lot'):
 
     keywords = read_csv('keywords.txt', header = None, encoding = 'utf-8', skip_blank_lines = True)
+    keywords = Series(keywords).drop_duplicates(keep = 'first')
+
     os.makedirs(target_dir, exist_ok=True)
 
-    for SEED in keywords.iloc[-8:, :][0].to_list():   # Lot 2.
+    for SEED in keywords:   # Lot 2.
 
         save_filename = f'scraped_{SEED}.csv'
         if not exists(join(target_dir, save_filename)):
@@ -42,5 +44,6 @@ def main(target_dir = r'results/second_lot'):
             sleep(5.0)
 
 if __name__ == "__main__":
-    df = scrape_tweets(search_term = None, store_csv = True, save_dir = r'results/temp', verbose = True)
-    print(f"Completed. Obtained {len(df)} tweets.")
+    #df = scrape_tweets(search_term = None, store_csv = True, save_dir = r'results/temp', verbose = True)
+    
+    main(target_dir = r'results/all_keywords')
