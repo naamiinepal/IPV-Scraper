@@ -110,15 +110,15 @@ def scrape_tweets(search_term: Optional[str],
     c.Username = None
     c.User_id = None
     c.Search = search_term
-    c.Retweets = True
+    c.Retweets = False
     c.Replies = True
-    c.Location = True
-    c.Geo = "27.700769,85.300140,10km"
+    c.Location = None
+    c.Geo = None            #"27.700769,85.300140,10km"
     c.Lang = 'ne'           # "ne" for Nepali, "hi" for Hindi, "en" for English
-    c.Since = "2019-01-01"
+    c.Since = "2015-01-01"
 
     # Custom output format
-    c.Limit = 100
+    c.Limit = None
     c.Pandas = True
     c.Store_csv = False
     c.Store_json = False
