@@ -2,12 +2,13 @@ import os
 from time import sleep, time
 
 from pandas import Series, read_csv
-from pipeline.get_replies import TweetReplies
 from os.path import join, exists
 
 # Local modules.
+from pipeline.get_replies import TweetReplies
 from pipeline.twint_scraper import scrape_tweets
 from utils import utils
+from utils.organize_scraped import organizer
 
 def collect_tweets_from_seed(seed: str):
     start = time()
@@ -22,7 +23,7 @@ def collect_tweets_from_seed(seed: str):
     return df
 
 
-def main(target_dir = r'results/second_lot'):
+def main(target_dir = r'results/second_lot', organize_tweets: bool = True):
 
     keywords = read_csv('keywords.txt', header = None, encoding = 'utf-8', skip_blank_lines = True)
     keywords = Series(keywords).drop_duplicates(keep = 'first')
@@ -42,6 +43,10 @@ def main(target_dir = r'results/second_lot'):
                 continue
 
             sleep(5.0)
+    
+    # Organize scraped Tweets in a file.
+    organizer(root = target_dir, output_filename = 'scraped_all_keywords_04-05-022.xlsx')
+    
 
 if __name__ == "__main__":
     #df = scrape_tweets(search_term = None, store_csv = True, save_dir = r'results/temp', verbose = True)
