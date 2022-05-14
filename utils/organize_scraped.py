@@ -1,3 +1,13 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat May 14 11:46:27 2022
+
+@author: Sagun Shakya
+
+Description: 
+
+"""
+
 #%% Import libraries.
 import emoji
 import pandas as pd
@@ -30,39 +40,39 @@ def cleaner(text: str) -> str:
     text = re.sub(pattern2, '', text)
     return text
 
+def organizer(root: str, output_filename: str):
+    filenames = os.listdir(root)
+    assert len(filenames) > 0, "There are no files in the root directory."
 
-root = r'D:\ML_projects\IPV-Scraper\results\second_lot'
-filenames = os.listdir(root)
-filepaths = [join(root, filename) for filename in filenames]
+    filepaths = [join(root, filename) for filename in filenames]
 
-print(f'Found {len(filenames)} files in {root}.\n')
+    print(f'Found {len(filenames)} files in {root}.\n')
 
-#%% Load Files.
-dataframe_list = [pd.read_csv(my_path, encoding='utf-8', skip_blank_lines = True) for my_path in filepaths]
+    #%% Load Files.
+    dataframe_list = [pd.read_csv(my_path, encoding='utf-8', skip_blank_lines = True) for my_path in filepaths]
 
-#%% Concatenate all DataFrames.
-df_main = pd.concat(dataframe_list, axis = 0, ignore_index = True)
+    #%% Concatenate all DataFrames.
+    df_main = pd.concat(dataframe_list, axis = 0, ignore_index = True)
 
-# Clean Tweets.
-df_main['tweet'] = df_main['tweet'].apply(cleaner)
+    # Clean Tweets.
+    df_main['tweet'] = df_main['tweet'].apply(cleaner)
 
-# Select only the columns "date tweet link search".
-df_main = df_main["date tweet link search".split()]
-df_main.columns = "date text link keyword".split()
+    # Select only the columns "date tweet link search".
+    df_main = df_main["date tweet link search".split()]
+    df_main.columns = "date text link keyword".split()
 
-# Select only those rows having sentence lengths greater than or equal to 3.
-condition = df_main['text'].apply(lambda x: len(x.split()) >= 3)
-df_main = df_main[condition]
+    # Select only those rows having sentence lengths greater than or equal to 3.
+    condition = df_main['text'].apply(lambda x: len(x.split()) >= 3)
+    df_main = df_main[condition]
 
-# Remove duplicated texts.
-df_main.drop_duplicates(subset = 'text', keep = 'first', ignore_index = True, inplace = True)
+    # Remove duplicated texts.
+    df_main.drop_duplicates(subset = 'text', keep = 'first', ignore_index = True, inplace = True)
 
-# Reset index.
-df_main.reset_index(drop = True, inplace = True)
+    # Reset index.
+    df_main.reset_index(drop = True, inplace = True)
 
-#%% To CSV.
-output_filename = 'df_merged_second_lot_search_terms_cleaned_05-May-2021_nep.xlsx'
-#df_main.to_csv(join(root, output_filename), index = None, encoding = 'utf-8')
-df_main.to_excel(join(root, output_filename), index = None, encoding = 'utf-8')
+    #%% To CSV.
+    df_main.to_excel(join(root, output_filename), index = None, encoding = 'utf-8')
 
-df_main.keyword.value_counts().to_csv(join(root, 'tweet_counts_nep_second_lot.csv'), encoding = 'utf-8', header = None)
+    #%% Total keywords (by frequency).
+    df_main.keyword.value_counts().to_csv(join(root, 'tweet_keyowrd_counts.csv'), encoding = 'utf-8', header = None)
