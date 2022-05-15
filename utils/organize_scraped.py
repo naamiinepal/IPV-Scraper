@@ -41,10 +41,19 @@ def cleaner(text: str) -> str:
     return text
 
 def organizer(root: str, output_filename: str):
+    """
+    Organizes the scraped keyword-searched files into one aggregated excel file.
+    Processes the filenames of the form scraped_{<keyword>}.csv
+
+    Args:
+        root (str): Root directory containing all scraped files.
+        output_filename (str): Filename of the excel file.
+    """    
+    
     filenames = os.listdir(root)
     assert len(filenames) > 0, "There are no files in the root directory."
 
-    filepaths = [join(root, filename) for filename in filenames]
+    filepaths = [join(root, filename) for filename in filenames if (not filename.endswith(".tsv")) and (not filename.endswith('.xlsx'))]
 
     print(f'Found {len(filenames)} files in {root}.\n')
 
@@ -75,4 +84,4 @@ def organizer(root: str, output_filename: str):
     df_main.to_excel(join(root, output_filename), index = None, encoding = 'utf-8')
 
     #%% Total keywords (by frequency).
-    df_main.keyword.value_counts().to_csv(join(root, 'tweet_keyowrd_counts.csv'), encoding = 'utf-8', header = None)
+    df_main.keyword.value_counts().to_csv(join(root, 'tweet_keyword_counts.csv'), encoding = 'utf-8', header = None)
