@@ -5,7 +5,7 @@ Created on Sat May 14 11:46:27 2022
 @author: Sagun Shakya
 
 Description: 
-
+    Organizes/aggregates the separate CSV files containing tweets collected using search terms into one giant excel file.
 """
 
 #%% Import libraries.
