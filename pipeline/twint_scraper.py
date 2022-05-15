@@ -118,7 +118,7 @@ def scrape_tweets(search_term: Optional[str],
     c.Since = "2015-01-01"
 
     # Custom output format
-    c.Limit = None
+    c.Limit = 10000
     c.Pandas = True
     c.Store_csv = False
     c.Store_json = False
