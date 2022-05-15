@@ -1,4 +1,15 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat May 14 11:46:27 2022
 
+@author: Sagun Shakya
+
+Description: 
+    - Collects tweets based on a search term (or seed).
+    - Organizes/aggregates the separate CSV files containing tweets collected using search terms into one giant excel file.
+"""
+
+# Necessary imports.
 import os
 from time import sleep, time
 
@@ -38,6 +49,14 @@ def collect_tweets_from_seed(seed: str) -> DataFrame:
 
 
 def main(target_dir:str, output_filename: str, organize_tweets: bool = True):
+    """
+    Takes in search terms from a keywords.txt file and makes searches and organizes the scraped tweets to one excel file.
+
+    Args:
+        target_dir (str): Directory to store the scraped tweets in CSV Files and the final aggregated excel file.
+        output_filename (str): Name of the Aggregated file. Must end with ".xlsx".
+        organize_tweets (bool, optional): Whether to Create an Aggregation of the scraped tweets into one giant excel file. Defaults to True.
+    """    
 
     keywords = read_csv('keywords.txt', header = None, encoding = 'utf-8', skip_blank_lines = True)
     keywords = keywords.drop_duplicates(keep = 'first').values.ravel()
