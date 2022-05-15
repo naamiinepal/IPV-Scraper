@@ -56,7 +56,7 @@ def main(target_dir:str, output_filename: str, organize_tweets: bool = True):
                 df = collect_tweets_from_seed(SEED)
                 if len(df) > 0:
                     df.to_csv(join(target_dir, save_filename), index = None, encoding = "utf-8")
-            except:
+            except KeyError:
                 print(f"\nSkipping for seed = {SEED}.\n")
                 skipped.append(SEED)
                 continue
@@ -75,5 +75,5 @@ if __name__ == "__main__":
     '''
     Driver Code.
     '''
-    main(target_dir = r'results/all_keywords', output_filename = 'scraped_all_keywords_15-05-022.xlsx', organize_tweets = True)
-    
+    #main(target_dir = r'results/all_keywords', output_filename = 'scraped_all_keywords_15-05-022.xlsx', organize_tweets = True)
+    organizer(r'results/all_keywords', output_filename = 'scraped_all_keywords_15-05-022.xlsx')
