@@ -49,11 +49,11 @@ def organizer(root: str, output_filename: str):
         root (str): Root directory containing all scraped files.
         output_filename (str): Filename of the excel file.
     """    
-    
+
     filenames = os.listdir(root)
     assert len(filenames) > 0, "There are no files in the root directory."
 
-    filepaths = [join(root, filename) for filename in filenames if (not filename.endswith(".tsv")) and (not filename.endswith('.xlsx'))]
+    filepaths = [join(root, filename) for filename in filenames if (not filename.endswith(".tsv")) and (not filename.endswith('.xlsx')) and ((not filename.endswith('.txt')))]
 
     print(f'Found {len(filenames)} files in {root}.\n')
 
