@@ -2,7 +2,7 @@
 import os
 from time import sleep, time
 
-from pandas import DataFrame, read_csv
+from pandas import DataFrame, Series, read_csv
 from os.path import join, exists
 
 # Local modules.
@@ -45,6 +45,9 @@ def main(target_dir:str, output_filename: str, organize_tweets: bool = True):
 
     os.makedirs(target_dir, exist_ok=True)
 
+    # Store list of skipped keywords.
+    skipped = []
+
     for SEED in keywords[:]:   # Lot 2.
 
         save_filename = f'scraped_{SEED}.csv'
@@ -55,9 +58,13 @@ def main(target_dir:str, output_filename: str, organize_tweets: bool = True):
                     df.to_csv(join(target_dir, save_filename), index = None, encoding = "utf-8")
             except:
                 print(f"\nSkipping for seed = {SEED}.\n")
+                skipped.append(SEED)
                 continue
 
             sleep(5.0)
+    
+    print(f'\nSkipped items :\n{skipped}')
+    Series(skipped).to_csv(join(target_dir, 'skipped.tsv'), encoding='utf-8', index = None, header = None, sep = '\t')
     
     # Organize scraped Tweets in a file.
     if organize_tweets:
