@@ -17,9 +17,13 @@ def collect_tweets_from_seed(seed: str):
     print(f"\nSearch Term : {seed}\n{'_'*50}")
 
     df = scrape_tweets(search_term = seed, fields = fields, store_csv = False)
+    print(f'Collected {len(df)} Tweets in {end - start: .5f} seconds.\n{"-" * 50}')
+    
+    # Apply language filter to obtain only nepali tweets.
+    df = df[df['language'] == 'ne']
 
     end = time()
-    print(f'Collected {len(df)} Tweets in {end - start: .5f} seconds.\n{"-" * 50}')
+    print(f'Collected {len(df)} filtered Tweets in {end - start: .5f} seconds.\n{"-" * 50}')
 
     return df
 
@@ -56,4 +60,5 @@ if __name__ == "__main__":
     '''
     Driver Code.
     '''
-    main(target_dir = r'results/all_keywords', output_filename = 'scraped_all_keywords_04-05-022.xlsx')
+    main(target_dir = r'results/all_keywords', output_filename = 'scr
+    
