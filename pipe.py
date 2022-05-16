@@ -94,5 +94,5 @@ if __name__ == "__main__":
     '''
     Driver Code.
     '''
-    #main(target_dir = r'results/all_keywords', output_filename = 'scraped_all_keywords_15-05-022.xlsx', organize_tweets = True)
-    organizer(r'results/all_keywords', output_filename = 'scraped_all_keywords_15-05-022.xlsx')
+    main(target_dir = r'results/all_keywords', output_filename = 'scraped_all_keywords_15-05-022.xlsx', organize_tweets = True)
+    
