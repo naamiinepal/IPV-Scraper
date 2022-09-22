@@ -1,4 +1,4 @@
-#!/home/rabin/ipv-scraper/.venv/bin/python
+#!.venv/bin/python
 
 # Run it once in a while but not twice in the same day
 

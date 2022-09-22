@@ -23,4 +23,4 @@ keywords=$(paste -sd, keywords.txt)
 echo $((counter + 1)) > $counter_file
 
 # Run twarc from the environment
-~/ipv-scraper/.venv/bin/twarc filter "$keywords" --lang ne --output $twitter_data_dir/realtime_$counter.csv --split 500 --format csv & disown
+.venv/bin/twarc filter "$keywords" --lang ne --output $twitter_data_dir/realtime_$counter.csv --split 500 --format csv & disown
